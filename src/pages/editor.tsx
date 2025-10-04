@@ -9,6 +9,7 @@ import BoldInlineTool from "../tools/BoldInlineTool";
 import ItalicInlineTool from "../tools/ItalicInlineTool";
 import TextAlignTool from "../tools/TextAlignTool";
 import TextColorTool from "../tools/TextColorTool";
+import ImageTool from "../tools/ImageTool";
 
 import { Separator } from "@/components/ui/separator";
 import "../styles/editor.css";
@@ -50,6 +51,7 @@ export default function EditorPage() {
             // Other configuration options...
             tools: {
               excalidraw: ExcalidrawTool,
+              image: ImageTool,
               // Inline tools
               bold: BoldInlineTool,
               italic: ItalicInlineTool,
