@@ -4,9 +4,53 @@
 }
 
 .ce-block__content {
-  max-width: 1000px !important;
+  max-width: 1200px !important;
 }
 
 .ce-toolbar__content {
-  max-width: 1000px !important;
+  max-width: 1200px !important;
+}
+
+/* Ensure editor dropdowns appear above Excalidraw board */
+.ce-popover,
+.ce-inline-toolbar,
+.ce-toolbar,
+.ce-conversion-toolbar,
+.ce-settings,
+.ce-popover--inline {
+  z-index: 2147483647 !important; /* Maximum z-index value */
+}
+
+/* Specific z-index for popover items and content */
+.ce-popover__items,
+.ce-popover__content {
+  z-index: 2147483647 !important;
+}
+
+/* Ensure inline toolbar is above everything */
+.ce-inline-toolbar {
+  z-index: 2147483647 !important;
+}
+
+/* Make sure conversion toolbar is also above */
+.ce-conversion-toolbar {
+  z-index: 2147483647 !important;
+}
+
+/* Override any select dropdowns in editor context */
+[data-radix-select-portal],
+[data-radix-select-content] {
+  z-index: 2147483647 !important;
+}
+
+/* Ensure Excalidraw canvas doesn't interfere with editor UI */
+.excalidraw .excalidraw-canvas {
+  z-index: 1 !important;
+}
+
+/* Force all editor UI elements to highest priority */
+.ce-toolbar__plus,
+.ce-toolbar__settings-btn,
+.ce-settings__button {
+  z-index: 2147483647 !important;
 }
