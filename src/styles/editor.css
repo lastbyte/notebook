@@ -1,0 +1,4 @@
+.ce-popover--inline .ce-popover__items {
+  height: fit-content;
+  width: fit-content;
+}
