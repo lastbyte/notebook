@@ -2,3 +2,11 @@
   height: fit-content;
   width: fit-content;
 }
+
+.ce-block__content {
+  max-width: 1000px !important;
+}
+
+.ce-toolbar__content {
+  max-width: 1000px !important;
+}

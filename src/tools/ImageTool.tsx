@@ -23,7 +23,7 @@ export default class ImageTool implements BlockTool {
   private startWidth = 0;
   private startHeight = 0;
   private resizeHandle: HTMLElement | null = null;
-  private resizeMode: 'width' | 'height' | 'both' = 'width';
+  private resizeMode: "width" | "height" | "both" = "width";
 
   static get toolbox() {
     return {
@@ -250,24 +250,27 @@ export default class ImageTool implements BlockTool {
   private createResizeHandle(container: HTMLElement): void {
     // Create multiple resize handles for different directions
     const handles = [
-      { position: 'bottom-right', cursor: 'nw-resize', mode: 'both' as const },
-      { position: 'bottom', cursor: 'ns-resize', mode: 'height' as const },
-      { position: 'right', cursor: 'ew-resize', mode: 'width' as const },
+      { position: "bottom-right", cursor: "nw-resize", mode: "both" as const },
+      { position: "bottom", cursor: "ns-resize", mode: "height" as const },
+      { position: "right", cursor: "ew-resize", mode: "width" as const },
     ];
 
     handles.forEach(({ position, cursor, mode }) => {
       const handle = document.createElement("div");
-      let positionStyles = '';
-      
+      let positionStyles = "";
+
       switch (position) {
-        case 'bottom-right':
-          positionStyles = 'bottom: -5px; right: -5px; width: 12px; height: 12px; border-radius: 50%;';
+        case "bottom-right":
+          positionStyles =
+            "bottom: -5px; right: -5px; width: 12px; height: 12px; border-radius: 50%;";
           break;
-        case 'bottom':
-          positionStyles = 'bottom: -5px; left: 50%; transform: translateX(-50%); width: 20px; height: 8px; border-radius: 4px;';
+        case "bottom":
+          positionStyles =
+            "bottom: -5px; left: 50%; transform: translateX(-50%); width: 20px; height: 8px; border-radius: 4px;";
           break;
-        case 'right':
-          positionStyles = 'right: -5px; top: 50%; transform: translateY(-50%); width: 8px; height: 20px; border-radius: 4px;';
+        case "right":
+          positionStyles =
+            "right: -5px; top: 50%; transform: translateY(-50%); width: 8px; height: 20px; border-radius: 4px;";
           break;
       }
 
@@ -288,9 +291,9 @@ export default class ImageTool implements BlockTool {
       });
 
       container.appendChild(handle);
-      
+
       // Store the main resize handle (bottom-right) for legacy compatibility
-      if (position === 'bottom-right') {
+      if (position === "bottom-right") {
         this.resizeHandle = handle;
       }
     });
@@ -325,12 +328,12 @@ export default class ImageTool implements BlockTool {
     this.startY = e.clientY;
     this.startWidth = this.imageElement.offsetWidth;
     this.startHeight = this.imageElement.offsetHeight;
-    
+
     // Add a visual indicator that resizing is active
     this.imageElement.style.opacity = "0.8";
     document.body.style.cursor = (e.target as HTMLElement).style.cursor;
     document.body.style.userSelect = "none";
-    
+
     e.preventDefault();
     e.stopPropagation();
   }
@@ -340,28 +343,28 @@ export default class ImageTool implements BlockTool {
 
     const deltaX = e.clientX - this.startX;
     const deltaY = e.clientY - this.startY;
-    
+
     let newWidth = this.startWidth;
     let newHeight = this.startHeight;
 
     switch (this.resizeMode) {
-      case 'width': {
+      case "width": {
         newWidth = Math.max(100, Math.min(800, this.startWidth + deltaX));
         // Maintain aspect ratio
         const aspectRatio = this.startHeight / this.startWidth;
         newHeight = newWidth * aspectRatio;
         break;
       }
-        
-      case 'height': {
+
+      case "height": {
         newHeight = Math.max(75, Math.min(600, this.startHeight + deltaY));
         // Maintain aspect ratio
         const widthRatio = this.startWidth / this.startHeight;
         newWidth = newHeight * widthRatio;
         break;
       }
-        
-      case 'both': {
+
+      case "both": {
         newWidth = Math.max(100, Math.min(800, this.startWidth + deltaX));
         newHeight = Math.max(75, Math.min(600, this.startHeight + deltaY));
         break;
@@ -376,14 +379,14 @@ export default class ImageTool implements BlockTool {
 
   private handleResizeEnd(): void {
     if (!this.imageElement) return;
-    
+
     this.isResizing = false;
-    
+
     // Reset visual indicators
     this.imageElement.style.opacity = "1";
     document.body.style.cursor = "";
     document.body.style.userSelect = "";
-    
+
     // Hide all resize handles
     if (this.wrapper) {
       const handles = this.wrapper.querySelectorAll('div[style*="cursor:"]');

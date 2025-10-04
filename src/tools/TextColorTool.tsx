@@ -72,7 +72,7 @@ export default class TextColorTool implements InlineTool {
     const inlineToolbar = document.querySelector(".ce-inline-toolbar");
     if (inlineToolbar) {
       const toolbarRect = inlineToolbar.getBoundingClientRect();
-      tempContainer.style.top = `${toolbarRect.bottom + window.scrollY + 8}px`;
+      tempContainer.style.top = `${toolbarRect.bottom + window.scrollY + 40}px`;
       tempContainer.style.left = `${toolbarRect.left + window.scrollX}px`;
     } else {
       // Fallback to center if toolbar not found

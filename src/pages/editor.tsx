@@ -10,6 +10,10 @@ import ItalicInlineTool from "../tools/ItalicInlineTool";
 import TextAlignTool from "../tools/TextAlignTool";
 import TextColorTool from "../tools/TextColorTool";
 import ImageTool from "../tools/ImageTool";
+import Table from "@editorjs/table";
+import Title from "title-editorjs";
+
+import EditorjsList from "@editorjs/list";
 
 import { Separator } from "@/components/ui/separator";
 import "../styles/editor.css";
@@ -17,85 +21,72 @@ import TextStyleTool from "../tools/TextStyleTool";
 import ExcalidrawTool from "@/tools/ExcalidrawTool";
 
 export default function EditorPage() {
-  const editorRef = useRef<HTMLDivElement | null>(null);
-  const editorInstanceRef = useRef<EditorJS | null>(null);
+  const editorRef = useRef<EditorJS | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
-    const holderElement = editorRef.current;
-
-    const initializeEditor = async () => {
-      if (holderElement && !editorInstanceRef.current && isMounted) {
-        // Clear any existing content in the holder
-        holderElement.innerHTML = "";
-
-        try {
-          editorInstanceRef.current = new EditorJS({
-            autofocus: true,
-            inlineToolbar: true,
-            minHeight: 500,
-            holder: holderElement,
-            placeholder: "Type here to write your story...",
-            onReady: () => {
-              if (isMounted && editorInstanceRef.current) {
-                console.log("Editor.js is ready to work!");
-                // Initialize plugins after editor is ready
-                new Undo({ editor: editorInstanceRef.current });
-                new MultiBlockSelectionPlugin({
-                  editor: editorInstanceRef.current,
-                  version: "2.28.0",
-                });
-              }
-            },
-
-            // Other configuration options...
-            tools: {
-              excalidraw: ExcalidrawTool,
-              image: ImageTool,
-              // Inline tools
-              bold: BoldInlineTool,
-              italic: ItalicInlineTool,
-              textStyle: TextStyleTool,
-              textAlign: TextAlignTool,
-              textColor: TextColorTool,
-              backgroundColor: BackgroundTool,
-            },
-          });
-        } catch (error) {
-          console.error("Failed to initialize EditorJS:", error);
-        }
-      }
-    };
-
-    initializeEditor();
-
-    // Cleanup function
-    return () => {
-      isMounted = false;
-
-      if (editorInstanceRef.current) {
-        // Clean up the mutation observer
-        const editorWithObserver = editorInstanceRef.current as EditorJS & {
-          widthObserver?: MutationObserver;
-        };
-        if (editorWithObserver.widthObserver) {
-          editorWithObserver.widthObserver.disconnect();
+    // Initialize editor only once
+    if (!editorRef.current) {
+      // Use setTimeout to ensure DOM is fully rendered
+      const timer = setTimeout(() => {
+        const holderElement = document.getElementById("editorjs");
+        if (!holderElement) {
+          console.error('Element with ID "editorjs" not found');
+          return;
         }
 
-        try {
-          if (editorInstanceRef.current.destroy) {
-            editorInstanceRef.current.destroy();
+        editorRef.current = new EditorJS({
+        autofocus: true,
+        inlineToolbar: true,
+        minHeight: 500,
+        holder: "editorjs",
+        placeholder: "Type here to write your story...",
+        onReady: () => {
+          if (editorRef.current) {
+            console.log("Editor.js is ready to work!");
+            // Initialize plugins after editor is ready
+            new Undo({ editor: editorRef.current });
+            new MultiBlockSelectionPlugin({
+              editor: editorRef.current,
+              version: "2.28.0",
+            });
           }
-        } catch (error) {
-          console.error("Error destroying editor:", error);
-        }
+        },
 
-        editorInstanceRef.current = null;
-      }
+        // Other configuration options...
+        tools: {
+          excalidraw: ExcalidrawTool,
+          image: ImageTool,
+          title: {
+            class: Title,
+            inlineToolbar: true,
+          },
+          List: {
+            class: EditorjsList,
+            inlineToolbar: true,
+            config: {
+              defaultStyle: "unordered",
+            },
+          },
+          Table: Table,
+          // Inline tools
+          bold: BoldInlineTool,
+          italic: ItalicInlineTool,
+          textStyle: TextStyleTool,
+          textAlign: TextAlignTool,
+          textColor: TextColorTool,
+          backgroundColor: BackgroundTool,
+        },
+        });
+      }, 100); // Small delay to ensure DOM is ready
 
-      // Clear the holder element
-      if (holderElement) {
-        holderElement.innerHTML = "";
+      return () => clearTimeout(timer);
+    }
+
+    // Cleanup function to destroy editor on unmount
+    return () => {
+      if (editorRef.current) {
+        editorRef.current.destroy();
+        editorRef.current = null;
       }
     };
   }, []);
@@ -108,7 +99,7 @@ export default function EditorPage() {
       </div>
       <Separator />
       <div className="flex-1">
-        <div ref={editorRef} className="w-full h-full"></div>
+        <div id="editorjs" className="w-full h-full"></div>
       </div>
     </div>
   );
