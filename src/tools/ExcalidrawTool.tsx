@@ -6,9 +6,6 @@ import type { Root } from "react-dom/client";
 import { createRoot } from "react-dom/client";
 import React from "react";
 import ExcalidrawBoard from "./ExcalidrawBoard";
-import { icons, PresentationIcon } from "lucide-react";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ExcalidrawData {
   elements: any[];
   appState: any;
@@ -55,11 +52,48 @@ export default class ExcalidrawTool implements BlockTool {
 
   constructor({ data, readOnly }: BlockToolConstructorOptions) {
     this.readOnly = readOnly || false;
-    this.data = data || {
-      elements: [],
-      appState: {},
-      files: {},
-      height: 500, // Default height
+
+    // Ensure appState has proper default structure for Excalidraw
+    const defaultAppState = {
+      collaborators: new Map(),
+      currentItemStrokeColor: "#000000",
+      currentItemBackgroundColor: "transparent",
+      currentItemFillStyle: "hachure",
+      currentItemStrokeWidth: 1,
+      currentItemStrokeStyle: "solid",
+      currentItemRoughness: 1,
+      currentItemOpacity: 100,
+      currentItemFontFamily: 1,
+      currentItemFontSize: 20,
+      currentItemTextAlign: "left",
+      currentItemStartArrowhead: null,
+      currentItemEndArrowhead: "arrow",
+      scrollX: 0,
+      scrollY: 0,
+      zoom: { value: 1 },
+      currentItemRoundness: "round",
+      gridSize: null,
+      colorPalette: {},
+    };
+
+    this.data = {
+      elements: data?.elements || [],
+      files: data?.files || {},
+      height: data?.height || 500,
+      // Ensure appState is properly merged with defaults
+      appState: {
+        ...defaultAppState,
+        ...(data?.appState || {}),
+        // Ensure collaborators is always a Map
+        collaborators:
+          data?.appState?.collaborators instanceof Map
+            ? data.appState.collaborators
+            : new Map(
+                data?.appState?.collaborators
+                  ? Object.entries(data.appState.collaborators)
+                  : []
+              ),
+      },
     };
   }
 

@@ -1,14 +1,19 @@
 .ce-popover--inline .ce-popover__items {
   height: fit-content;
   width: fit-content;
+  gap: 4px;
+}
+
+.ce-popover--inline .ce-popover__container {
+  height: 40px;
 }
 
 .ce-block__content {
-  max-width: 1200px !important;
+  max-width: calc(100vw - 140px) !important;
 }
 
 .ce-toolbar__content {
-  max-width: 1200px !important;
+  max-width: calc(100vw - 140px) !important;
 }
 
 /* Ensure editor dropdowns appear above Excalidraw board */
@@ -53,4 +58,98 @@
 .ce-toolbar__settings-btn,
 .ce-settings__button {
   z-index: 2147483647 !important;
+}
+
+/* Print styles */
+@media print {
+  /* Hide the menubar and buttons during print */
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Ensure editor content takes full width */
+  #editorjs {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+  }
+
+  /* Hide editor toolbars during print */
+  .ce-toolbar,
+  .ce-inline-toolbar,
+  .ce-popover,
+  .ce-conversion-toolbar {
+    display: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  .ce-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Print-friendly colors */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .ce-block__content {
+    color: black !important;
+  }
+}
+
+/* Text Align Tool Inline Styles */
+.text-align-tool-wrapper {
+  display: inline-flex !important;
+  gap: 2px !important;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.text-align-tool-wrapper button {
+  border-radius: 4px !important;
+  margin: 0 !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  padding: 4px !important;
+  transition: all 0.15s ease;
+}
+
+.text-align-tool-wrapper button:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.text-align-tool-wrapper button.ce-inline-tool--active {
+  background: rgba(56, 132, 255, 0.15) !important;
+  color: #3084ff !important;
+}
+
+/* Dark mode support for text align tool */
+.dark .text-align-tool-wrapper {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .text-align-tool-wrapper button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Text alignment classes */
+.text-left {
+  text-align: left !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+/* Fix for paths with stroke="none" - reset stroke to unset */
+path[stroke="none"] {
+  stroke: transparent !important;
 }

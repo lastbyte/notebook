@@ -22,7 +22,6 @@ export default class ImageTool implements BlockTool {
   private startY = 0;
   private startWidth = 0;
   private startHeight = 0;
-  private resizeHandle: HTMLElement | null = null;
   private resizeMode: "width" | "height" | "both" = "width";
 
   static get toolbox() {
@@ -291,11 +290,6 @@ export default class ImageTool implements BlockTool {
       });
 
       container.appendChild(handle);
-
-      // Store the main resize handle (bottom-right) for legacy compatibility
-      if (position === "bottom-right") {
-        this.resizeHandle = handle;
-      }
     });
 
     // Show/hide handles on hover

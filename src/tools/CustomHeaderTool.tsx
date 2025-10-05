@@ -115,11 +115,13 @@ export default class CustomHeaderTool implements BlockTool {
 
     header.textContent = this.data.text;
 
+    //@ts-expect-error // 'event' is implicitly defined in some environments
     header.addEventListener("input", (event) => {
       this.data.text = (event.target as HTMLElement).textContent || "";
     });
 
-    header.addEventListener("keydown", (event) => {
+    //@ts-expect-error // 'event' is implicitly defined in some environments
+    header.addEventListener("keydown", () => {
       const keyboardEvent = event as KeyboardEvent;
       if (keyboardEvent.key === "Enter") {
         keyboardEvent.preventDefault();
