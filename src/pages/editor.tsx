@@ -44,8 +44,7 @@ export default function EditorPage() {
     if (saved !== null) {
       return saved === "true";
     }
-    // Check system preference
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return false;
   });
   const saveTimeoutRef = useRef<number | null>(null);
 
