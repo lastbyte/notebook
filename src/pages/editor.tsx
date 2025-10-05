@@ -46,7 +46,6 @@ export default function EditorPage() {
     }
     return false;
   });
-  const saveTimeoutRef = useRef<number | null>(null);
 
   // LocalStorage keys
   const EDITOR_DATA_KEY = "editorjs-notebook-data";
@@ -86,16 +85,6 @@ export default function EditorPage() {
       }
     }
   }, [EDITOR_DATA_KEY, LAST_SAVED_KEY]);
-
-  // Debounced auto-save function
-  const debouncedAutoSave = useCallback(() => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    saveTimeoutRef.current = window.setTimeout(() => {
-      saveToLocalStorage();
-    }, 2000); // Save after 2 seconds of inactivity
-  }, [saveToLocalStorage]);
 
   // Load editor data from localStorage
   const loadFromLocalStorage = useCallback(() => {
@@ -438,10 +427,7 @@ export default function EditorPage() {
             }
           },
           onChange: () => {
-            // Auto-save after each change with debouncing (only when not in read-only mode)
-            if (!isReadOnly) {
-              debouncedAutoSave();
-            }
+            // onChange handler can be used for other purposes if needed
           },
 
           // Other configuration options...
@@ -498,11 +484,8 @@ export default function EditorPage() {
         editorRef.current.destroy();
         editorRef.current = null;
       }
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
     };
-  }, [debouncedAutoSave, loadFromLocalStorage, isReadOnly]);
+  }, [loadFromLocalStorage, isReadOnly]);
 
   useEffect(() => {
     // Update timestamp every minute
