@@ -238,8 +238,33 @@ export default class TextStyleTool implements InlineTool {
         // Apply new text style
         contentElement.classList.add(`text-${style}`);
 
-        // Also set data attribute for easier debugging
+        // Also set data attribute for easier debugging and persistence
         contentElement.setAttribute("data-text-style", style);
+
+        // Store the style in localStorage separately for persistence
+        const blockId =
+          blockElement.getAttribute("data-id") ||
+          blockElement.id ||
+          currentBlock.toString();
+        const textStylesKey = "editorjs-text-styles";
+        let textStyles: Record<string, string> = {};
+
+        try {
+          const savedStyles = localStorage.getItem(textStylesKey);
+          if (savedStyles) {
+            textStyles = JSON.parse(savedStyles);
+          }
+        } catch (error) {
+          console.warn("Could not load existing text styles:", error);
+        }
+
+        textStyles[blockId] = style;
+
+        try {
+          localStorage.setItem(textStylesKey, JSON.stringify(textStyles));
+        } catch (error) {
+          console.warn("Could not save text style:", error);
+        }
 
         console.log(`Applied text style: ${style} to element:`, contentElement);
       } else {

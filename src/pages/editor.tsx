@@ -99,6 +99,73 @@ export default function EditorPage() {
     return null;
   }, [EDITOR_DATA_KEY]);
 
+  // Restore text styles from localStorage
+  const restoreTextStyles = useCallback(() => {
+    const textStylesKey = "editorjs-text-styles";
+    try {
+      const savedStyles = localStorage.getItem(textStylesKey);
+      if (savedStyles) {
+        const textStyles: Record<string, string> = JSON.parse(savedStyles);
+
+        // Wait a bit for the editor to fully render
+        setTimeout(() => {
+          Object.entries(textStyles).forEach(([blockId, style]) => {
+            // Try to find the block element by various means
+            let blockElement =
+              document.querySelector(`[data-id="${blockId}"]`) ||
+              document.getElementById(blockId);
+
+            // If not found by ID, try to find by index if it's a number
+            if (!blockElement && !isNaN(Number(blockId))) {
+              const blocks = document.querySelectorAll(".ce-block");
+              const index = Number(blockId);
+              if (blocks[index]) {
+                blockElement = blocks[index];
+              }
+            }
+
+            if (blockElement) {
+              const contentElement =
+                blockElement.querySelector('[contenteditable="true"]') ||
+                blockElement.querySelector(".ce-paragraph") ||
+                blockElement.querySelector(".cdx-block") ||
+                blockElement.querySelector("div[data-placeholder]") ||
+                blockElement.querySelector("p") ||
+                blockElement.querySelector("div");
+
+              if (contentElement) {
+                // Remove existing text style classes
+                const stylesToRemove = [
+                  "text-h1",
+                  "text-h2",
+                  "text-h3",
+                  "text-h4",
+                  "text-h5",
+                  "text-h6",
+                  "text-body1",
+                  "text-body2",
+                  "text-caption1",
+                  "text-caption2",
+                ];
+                contentElement.classList.remove(...stylesToRemove);
+
+                // Apply the saved text style
+                contentElement.classList.add(`text-${style}`);
+                contentElement.setAttribute("data-text-style", style);
+
+                console.log(
+                  `Restored text style: ${style} to block ${blockId}`
+                );
+              }
+            }
+          });
+        }, 100); // Short delay to ensure DOM is ready
+      }
+    } catch (error) {
+      console.warn("Could not restore text styles:", error);
+    }
+  }, []);
+
   // Clear saved data
   const clearLocalStorage = useCallback(async () => {
     if (editorRef.current) {
@@ -108,6 +175,7 @@ export default function EditorPage() {
         // Remove from localStorage
         localStorage.removeItem(EDITOR_DATA_KEY);
         localStorage.removeItem(LAST_SAVED_KEY);
+        localStorage.removeItem("editorjs-text-styles"); // Clear text styles too
         console.log("Editor data cleared from localStorage");
       } catch (error) {
         console.error("Failed to clear editor data:", error);
@@ -424,6 +492,9 @@ export default function EditorPage() {
                 editor: editorRef.current,
                 version: "2.28.0",
               });
+
+              // Restore text styles after editor is ready
+              restoreTextStyles();
             }
           },
           onChange: () => {
@@ -485,7 +556,7 @@ export default function EditorPage() {
         editorRef.current = null;
       }
     };
-  }, [loadFromLocalStorage, isReadOnly]);
+  }, [loadFromLocalStorage, isReadOnly, restoreTextStyles]);
 
   useEffect(() => {
     // Update timestamp every minute
